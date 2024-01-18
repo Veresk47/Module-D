@@ -1,0 +1,24 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}
+
+
+{% block title %}
+ Пост подробнее
+{% endblock title%}
+
+{% block content%}
+<hr>
+<ul class="list-group list-group-flush">
+
+    <li class="list-group-item">
+        <small class="fw-bold">Автор: </small> {{ Post.author }} <br>
+        <small class="fw-bold">Заголовок:  </small> {{ Post.title | censor }} <br>
+
+        <small class="fw-bold">Категория:  </small> {{ Post.categoryType }}<br>
+        <small class="fw-bold">Текст:</small>{{ Post.text }} <br>
+        <small class="fw-bold">Дата создания:  </small> {{ Post.dateCreation | date:'d M y' }} <br>
+
+    </li>
+
+</ul>
+{% endblock content%}

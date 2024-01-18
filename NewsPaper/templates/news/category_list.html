@@ -1,0 +1,53 @@
+
+{% extends 'flatpages/default.html' %}
+
+{% load custom_filters %}
+
+{% block title %}
+News List
+{% endblock title %}
+
+{% block content %}
+<h1 class="text-center">Новости <span class="text-nuted fs-6 fw-normal">Всего: {{ page_obj.paginator.count}}</span> </h1>
+    <h1>Подписки</h1>
+        {% if is_not_subscriber %}
+            <p class="text-center"><a href="{% url 'subscribe' category.id %}">Подписаться</a></p>
+{% endif %}
+<hr>
+
+<ul class="list-group list-group-flush">
+    {% for post in category_news_list %}
+    <li class="list-group-item">
+        <small class="fw-bold">{{ post.dateCreation | date:'d M y' }}</small>
+        <a href="{% url 'post_detail' post.id %}">{{post.title}}</a>
+        <small class="text-muted">(автор: {{ post.author }})</small> <br>
+        <small class="fw-bold">категория:
+        {% for postCategory in post.postCategory.all %}
+       <a href="{% url 'category_list' postCategory.id %}">{{ postCategory }}</a>
+          {% endfor %}
+
+        </small>
+        <p>{{ post.text | truncatechars:210 }}</p>
+    </li>
+    {% endfor %}
+</ul>
+
+   {% if page_obj.has_previous %}
+       <a href="?page=1">1</a>
+       {% if page_obj.previous_page_number != 1 %}
+           ...
+           <a href="?page={{ page_obj.previous_page_number }}">{{ page_obj.previous_page_number }}</a>
+       {% endif %}
+   {% endif %}
+
+   {{ page_obj.number }}
+
+   {% if page_obj.has_next %}
+       <a href="?page={{ page_obj.next_page_number }}">{{ page_obj.next_page_number }}</a>
+       {% if paginator.num_pages != page_obj.next_page_number %}
+           ...
+           <a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+       {% endif %}
+   {% endif %}
+
+{% endblock content %}
