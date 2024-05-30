@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.generic import ListView , DetailView, CreateView, UpdateView, DeleteView
+from django.http import HttpResponse
+from django.views import View
 from .models import Author, Post, Category
 from .filters import PostFilter
 from .forms import PostForm
@@ -8,6 +10,8 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.db.models import Exists, OuterRef
 from django.views.decorators.csrf import csrf_protect
+from .tasks import hello, printer
+from datetime import datetime, timedelta
 
 
 class AuthorList(ListView):
@@ -118,3 +122,9 @@ def subscribe(request, pk):
 
     message = 'Вы успешно подписались на рассылку новостей категории'
     return render(request, 'news/subscribe.html', {'category': category, 'message': message})
+
+class IndexView(View):
+    def get(self, request):
+        printer.apply_async([10], eta = datetime.now() + timedelta(seconds=5))
+        hello.delay()
+        return HttpResponse('Hello')
